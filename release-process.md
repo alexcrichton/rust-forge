@@ -33,40 +33,16 @@ The stable build will **not** deploy automatically to prod. The
 rust-central-station repository is configured to upload to **dev** every hour if
 it detects a change. You should be able to browse changes in dev.
 
-## Archive upload and prerelease testing (T-2 days, Tuesday)
-
-Now upload the bins to an s3 staging directory for testing as follows.
-This happens on the buildmaster under the rustbuild user.
-
-```sh
-cd ~/rust-buildbot/master/tmp/dist/packaging-stable
-# Move final staged bins to another directory. This clears out 'final' for the next release.
-mv final final-1.3.0
-# Sync bins to s3 archives
-# NOTE! This date is *not* the release date but the date mentioned in the manifest!
-s3cmd put --dry-run -P ./final-1.3.0/* s3://static-rust-lang-org/dist/2015-09-17/
-```
-
-Regenerate the index.
-
-```sh
-(cd && sh update-rust-dist-index.sh)
-```
+## Prerelease testing (T-2 days, Tuesday)
 
 Post a message to irlo asking for testing. The index is
-https://static-rust-lang-org.s3.amazonaws.com/dist/2015-09-17/index.html and our
-URL is then https://static.rust-lang.org/dist/2015-09-17/index.html.
+https://dev-static-rust-lang-org.s3.amazonaws.com/dist/2015-09-17/index.html and
+our URL is then https://dev-static.rust-lang.org/dist/2015-09-17/index.html.
 
 Test rustup with
 
 ```sh
-rustup update stable-2015-09-17
-```
-
-or rustup.sh with
-
-```sh
-curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- --spec=stable-2015-09-17
+RUSTUP_DIST_SERVER=https://dev-static.rust-lang.org rustup update stable
 ```
 
 ## Promote master to beta (T-2 days, Tuesday)
